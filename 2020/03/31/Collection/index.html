@@ -6,13 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Hexo</title>
+  <title>Collection | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="Java集合类">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Collection">
+<meta property="og:url" content="http://yoursite.com/2020/03/31/Collection/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Java集合类">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-03-30T17:30:44.355Z">
+<meta property="article:modified_time" content="2020-03-30T17:30:44.356Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
   
@@ -136,16 +140,14 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-Collection" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-Collection" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/03/31/Collection/">Collection</a>
+    <h1 class="article-title" itemprop="name">
+      Collection
     </h1>
   
 
@@ -158,10 +160,41 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="Java集合类"><a href="#Java集合类" class="headerlink" title="Java集合类"></a>Java集合类
-        
+        <h1 id="Java集合类"><a href="#Java集合类" class="headerlink" title="Java集合类"></a>Java集合类<a id="more"></a></h1><h2 id="1-分类："><a href="#1-分类：" class="headerlink" title="1.分类："></a>1.分类：</h2><p>&emsp;&emsp;Collection<br>&emsp;&emsp;&emsp;&emsp;–List<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;–ArrayList<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;–LinkedList<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;–Vector<br>&emsp;&emsp;&emsp;&emsp;–Set<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;–HashSet<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;–TreeSet<br>&emsp;&emsp;Map<br>&emsp;&emsp;&emsp;&emsp;–Hashtable<br>&emsp;&emsp;&emsp;&emsp;–HashMap<br>&emsp;&emsp;&emsp;&emsp;–TreeMap</p>
+<h2 id="2-Collection中的快速失败机制"><a href="#2-Collection中的快速失败机制" class="headerlink" title="2.Collection中的快速失败机制"></a>2.Collection中的快速失败机制</h2><p>&emsp;&emsp;快速失败机制(fast-fail)：是Collection的一种错误检测机制，当出现多个线程对同一个Collection操作时，会触发这种机制。<br>&emsp;&emsp;机制的原理：<br>&emsp;&emsp;步骤如下：<br>&emsp;&emsp;1)新建了一个ArrayList，名称为arrayList。<br>&emsp;&emsp;2) 向arrayList中添加内容。<br>&emsp;&emsp;3) 新建一个“线程a”，并在“线程a”中通过Iterator反复的读取arrayList的值。<br>&emsp;&emsp;4) 新建一个“线程b”，在“线程b”中删除arrayList中的一个“节点A”。<br>&emsp;&emsp;5) 这时，就会产生有趣的事件了。<br>&emsp;&emsp;在某一时刻，“线程a”创建了arrayList的Iterator。此时“节点A”仍然存在于arrayList中，创建arrayList时，expectedModCount = modCount(假设它们此时的值为N)。<br>&emsp;&emsp;在“线程a”在遍历arrayList过程中的某一时刻，“线程b”执行了，并且“线程b”删除了arrayList中的“节点A”。“线程b”执行remove()进行删除操作时，在remove()中执行了“modCount++”，此时modCount变成了N+1！<br>&emsp;&emsp;“线程a”接着遍历，当它执行到next()函数时，调用checkForComodification()比较“expectedModCount”和“modCount”的大小；而“expectedModCount=N”，“modCount=N+1”,这样，便抛出ConcurrentModificationException异常，产生fail-fast事件。  </p>
+<h2 id="3-ArrayList-LinkedList-Vector三者之间的异同"><a href="#3-ArrayList-LinkedList-Vector三者之间的异同" class="headerlink" title="3.ArrayList,LinkedList,Vector三者之间的异同"></a>3.ArrayList,LinkedList,Vector三者之间的异同</h2><p>&emsp;&emsp;相同点：三者都实现了List接口<br>&emsp;&emsp;不同点：<br>&emsp;&emsp;1.ArrayList，LinkecList是线程不安全的，Vector是线程安全的。<br>&emsp;&emsp;2.ArrayList，Vector底层是Object[]数组，LinkedList底层是双向链表。  </p>
+<h2 id="4-ArrayList源码分析"><a href="#4-ArrayList源码分析" class="headerlink" title="4.ArrayList源码分析"></a>4.ArrayList源码分析</h2><p>&emsp;&emsp;在JDK之前，初始化时，默认创建长度为10的数组，扩容时，采用grow方法，newLength = oldLength + (oldLength * 0.5)；其中数组的最大值为Integer.MAX - 8；若超过此长度，则将数组长度置为Integer.MAX，此为最大长度。（源码供参考）  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">private void grow(int minCapacity) &#123;</span><br><span class="line">    &#x2F;&#x2F; overflow-conscious code</span><br><span class="line">    int oldCapacity &#x3D; elementData.length;</span><br><span class="line">    int newCapacity &#x3D; oldCapacity + (oldCapacity &gt;&gt; 1);</span><br><span class="line">    if (newCapacity - minCapacity &lt; 0)</span><br><span class="line">        newCapacity &#x3D; minCapacity;</span><br><span class="line">    if (newCapacity - MAX_ARRAY_SIZE &gt; 0)</span><br><span class="line">        newCapacity &#x3D; hugeCapacity(minCapacity);</span><br><span class="line">    &#x2F;&#x2F; minCapacity is usually close to size, so this is a win:</span><br><span class="line">    elementData &#x3D; Arrays.copyOf(elementData, newCapacity);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private static int hugeCapacity(int minCapacity) &#123;</span><br><span class="line">    if (minCapacity &lt; 0) &#x2F;&#x2F; overflow</span><br><span class="line">        throw new OutOfMemoryError();</span><br><span class="line">    return (minCapacity &gt; MAX_ARRAY_SIZE) ?</span><br><span class="line">        Integer.MAX_VALUE :</span><br><span class="line">        MAX_ARRAY_SIZE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-HashSet存储的过程"><a href="#5-HashSet存储的过程" class="headerlink" title="5.HashSet存储的过程"></a>5.HashSet存储的过程</h2><p>&emsp;&emsp;添加元素时，首先调用该对象所属类的hashcode()方法；得到在数组中存放的位置：<br>&emsp;&emsp;&emsp;&emsp;–若数组对应位置没有元素，添加成功；<br>&emsp;&emsp;&emsp;&emsp;–若数组对应的位置有元素：<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;–比较此两元素的哈希值，若不相同，采用链表的方法链接该元素，添加成功；<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;–若哈希值相同：<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;–比较equals()方法，若equals()方法为true，则添加成功；<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;–若equals()方法为false，则添加失败。  </p>
+<h4 id="注：由于上述添加过程，所以在重写一个类的equals-方法时，必须重写hashcode-方法。"><a href="#注：由于上述添加过程，所以在重写一个类的equals-方法时，必须重写hashcode-方法。" class="headerlink" title="注：由于上述添加过程，所以在重写一个类的equals()方法时，必须重写hashcode()方法。"></a><strong>注：由于上述添加过程，所以在重写一个类的equals()方法时，必须重写hashcode()方法。</strong></h4><h2 id="6-HashMap源码分析"><a href="#6-HashMap源码分析" class="headerlink" title="6.HashMap源码分析"></a>6.HashMap源码分析</h2><h4 id="emsp-emsp-1-执行put-key-value-方法时：首先调用key所属类的hashcode-方法；得到在Entry数组中存放的位置："><a href="#emsp-emsp-1-执行put-key-value-方法时：首先调用key所属类的hashcode-方法；得到在Entry数组中存放的位置：" class="headerlink" title="&emsp;&emsp;1.执行put(key,value)方法时：首先调用key所属类的hashcode()方法；得到在Entry数组中存放的位置："></a>&emsp;&emsp;1.执行put(key,value)方法时：首先调用key所属类的hashcode()方法；得到在Entry数组中存放的位置：</h4><p>&emsp;&emsp;&emsp;&emsp;–若数组对应位置没有元素，添加成功；<br>&emsp;&emsp;&emsp;&emsp;–若数组对应的位置有元素：<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;–两两比较在此处元素key所属对象的哈希值，若不相同，采用链表的方法链接该元素(Java8之后采用链表加红黑树)，添加成功；<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;–若哈希值相同：<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;–比较equals()方法，若equals()方法为true，则添加成功；<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;–若equals()方法为false，用value值替换掉原来的value值。  </p>
+<h4 id="emsp-emsp-2-扩容机制：负载因子默认为0-75，初始长度为16，阈值为负载因子-当前长度。当Entry中非空的长度超过阈值之后，而且当前插入的元素位置处非空时，采用resize-方法，将桶的长度变为原来的二倍。-并将元素复制到新的Entry数组中。"><a href="#emsp-emsp-2-扩容机制：负载因子默认为0-75，初始长度为16，阈值为负载因子-当前长度。当Entry中非空的长度超过阈值之后，而且当前插入的元素位置处非空时，采用resize-方法，将桶的长度变为原来的二倍。-并将元素复制到新的Entry数组中。" class="headerlink" title="&emsp;&emsp;2.扩容机制：负载因子默认为0.75，初始长度为16，阈值为负载因子*当前长度。当Entry中非空的长度超过阈值之后，而且当前插入的元素位置处非空时，采用resize()方法，将桶的长度变为原来的二倍。    并将元素复制到新的Entry数组中。"></a>&emsp;&emsp;2.扩容机制：负载因子默认为0.75，初始长度为16，阈值为负载因子*当前长度。当Entry中非空的长度超过阈值之后，而且当前插入的元素位置处非空时，采用resize()方法，将桶的长度变为原来的二倍。    并将元素复制到新的Entry数组中。</h4><h4 id="Java7以及之前："><a href="#Java7以及之前：" class="headerlink" title="Java7以及之前："></a><strong>Java7以及之前：</strong></h4><p>&emsp;&emsp;1.初始化之后，底层创建Entry类型的数组，初始长度为16；<br>&emsp;&emsp;2.在桶数组非空位置添加元素时，链表采用的是头插法。<strong>有一个坏处是会使用头插法在多线程的时候会出现环的问题</strong></p>
+<h4 id="Java8以及之后"><a href="#Java8以及之后" class="headerlink" title="Java8以及之后"></a><strong>Java8以及之后</strong></h4><p>&emsp;&emsp;1.初始化的时候，不会创建数组；在第一次调用put方法的时候，创建长度为16的数组，类型为Node，实现了Entry接口。<br>&emsp;&emsp;2.底层引入红黑树，当桶数组中某一个索引元素以链表形式存储的个数大于8且当前桶数组的长度大于64，使用treeifyBin方法，将链表转换为红黑树；当红黑树的长度小于6时，退化为链表。<br>&emsp;&emsp;3.插入元素使用的是尾插法。  </p>
+<h4 id="尾插法的好处"><a href="#尾插法的好处" class="headerlink" title="尾插法的好处"></a>尾插法的好处</h4><p>&emsp;&emsp;使用头插会改变链表的上的顺序，但是如果使用尾插，在扩容时会保持链表元素原本的顺序，就不会出现链表成环的问题了。<br>&emsp;&emsp;Java7在多线程操作HashMap时可能引起死循环，原因是扩容转移后前后链表顺序倒置，在转移过程中修改了原来链表中节点的引用关系。<br>&emsp;&emsp;Java8在同样的前提下并不会引起死循环，原因是扩容转移后前后链表顺序不变，保持之前节点的引用关系。  </p>
+<h4 id="注：虽然jdk8后HashMap在多线程情况下扩容时不会出现死循环的情况，但是在多线程情况下仍不推荐使用HashMap。因为HashMap中的put-get方法并未加锁，这意味着无法保证上一秒put的值，下一秒取到的是原值，所以线程安全无法保证。多线程下推荐使用ConcurrentHashMap。此处引用：https-blog-csdn-net-Ho528528-article-details-103903998"><a href="#注：虽然jdk8后HashMap在多线程情况下扩容时不会出现死循环的情况，但是在多线程情况下仍不推荐使用HashMap。因为HashMap中的put-get方法并未加锁，这意味着无法保证上一秒put的值，下一秒取到的是原值，所以线程安全无法保证。多线程下推荐使用ConcurrentHashMap。此处引用：https-blog-csdn-net-Ho528528-article-details-103903998" class="headerlink" title="注：虽然jdk8后HashMap在多线程情况下扩容时不会出现死循环的情况，但是在多线程情况下仍不推荐使用HashMap。因为HashMap中的put/get方法并未加锁，这意味着无法保证上一秒put的值，下一秒取到的是原值，所以线程安全无法保证。多线程下推荐使用ConcurrentHashMap。此处引用：https://blog.csdn.net/Ho528528/article/details/103903998"></a><strong>注</strong>：虽然jdk8后HashMap在多线程情况下扩容时不会出现死循环的情况，但是在多线程情况下仍不推荐使用HashMap。因为HashMap中的put/get方法并未加锁，这意味着无法保证上一秒put的值，下一秒取到的是原值，所以线程安全无法保证。多线程下推荐使用ConcurrentHashMap。此处引用：<a href="https://blog.csdn.net/Ho528528/article/details/103903998" target="_blank" rel="noopener">https://blog.csdn.net/Ho528528/article/details/103903998</a></h4>
       
 
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
       
     </div>
     <div class="article-info article-info-index">
@@ -170,16 +203,75 @@
       
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/03/31/Collection/">展开全文 >></a>
-        </p>
-      
 
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2020/03/31/Collection/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2020/03/31/String/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">String</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -194,328 +286,32 @@
         </div>
         
         
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-String" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/03/31/String/">String</a>
-    </h1>
-  
-
-        
-        <a href="/2020/03/31/String/" class="archive-article-date">
-  	<time datetime="2020-03-30T16:06:44.485Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-31</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="String里面需要注意的地方"><a href="#String里面需要注意的地方" class="headerlink" title="String里面需要注意的地方"></a>String里面需要注意的地方
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/03/31/String/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Java集合类"><span class="toc-number">1.</span> <span class="toc-text">Java集合类</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-分类："><span class="toc-number">1.1.</span> <span class="toc-text">1.分类：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Collection中的快速失败机制"><span class="toc-number">1.2.</span> <span class="toc-text">2.Collection中的快速失败机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-ArrayList-LinkedList-Vector三者之间的异同"><span class="toc-number">1.3.</span> <span class="toc-text">3.ArrayList,LinkedList,Vector三者之间的异同</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-ArrayList源码分析"><span class="toc-number">1.4.</span> <span class="toc-text">4.ArrayList源码分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-HashSet存储的过程"><span class="toc-number">1.5.</span> <span class="toc-text">5.HashSet存储的过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#注：由于上述添加过程，所以在重写一个类的equals-方法时，必须重写hashcode-方法。"><span class="toc-number">1.5.0.1.</span> <span class="toc-text">注：由于上述添加过程，所以在重写一个类的equals()方法时，必须重写hashcode()方法。</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-HashMap源码分析"><span class="toc-number">1.6.</span> <span class="toc-text">6.HashMap源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#emsp-emsp-1-执行put-key-value-方法时：首先调用key所属类的hashcode-方法；得到在Entry数组中存放的位置："><span class="toc-number">1.6.0.1.</span> <span class="toc-text">&amp;emsp;&amp;emsp;1.执行put(key,value)方法时：首先调用key所属类的hashcode()方法；得到在Entry数组中存放的位置：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#emsp-emsp-2-扩容机制：负载因子默认为0-75，初始长度为16，阈值为负载因子-当前长度。当Entry中非空的长度超过阈值之后，而且当前插入的元素位置处非空时，采用resize-方法，将桶的长度变为原来的二倍。-并将元素复制到新的Entry数组中。"><span class="toc-number">1.6.0.2.</span> <span class="toc-text">&amp;emsp;&amp;emsp;2.扩容机制：负载因子默认为0.75，初始长度为16，阈值为负载因子*当前长度。当Entry中非空的长度超过阈值之后，而且当前插入的元素位置处非空时，采用resize()方法，将桶的长度变为原来的二倍。    并将元素复制到新的Entry数组中。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Java7以及之前："><span class="toc-number">1.6.0.3.</span> <span class="toc-text">Java7以及之前：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Java8以及之后"><span class="toc-number">1.6.0.4.</span> <span class="toc-text">Java8以及之后</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#尾插法的好处"><span class="toc-number">1.6.0.5.</span> <span class="toc-text">尾插法的好处</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#注：虽然jdk8后HashMap在多线程情况下扩容时不会出现死循环的情况，但是在多线程情况下仍不推荐使用HashMap。因为HashMap中的put-get方法并未加锁，这意味着无法保证上一秒put的值，下一秒取到的是原值，所以线程安全无法保证。多线程下推荐使用ConcurrentHashMap。此处引用：https-blog-csdn-net-Ho528528-article-details-103903998"><span class="toc-number">1.6.0.6.</span> <span class="toc-text">注：虽然jdk8后HashMap在多线程情况下扩容时不会出现死循环的情况，但是在多线程情况下仍不推荐使用HashMap。因为HashMap中的put&#x2F;get方法并未加锁，这意味着无法保证上一秒put的值，下一秒取到的是原值，所以线程安全无法保证。多线程下推荐使用ConcurrentHashMap。此处引用：https:&#x2F;&#x2F;blog.csdn.net&#x2F;Ho528528&#x2F;article&#x2F;details&#x2F;103903998</span></a></li></ol></li></ol></li></ol></li></ol>
+                    </div>
+                </span>
             </div>
         </div>
         
-        
     </div>
 </aside>
 
 
 
-
   
-    <article id="post-JavaThread" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/03/29/JavaThread/">JavaThread</a>
-    </h1>
   
 
-        
-        <a href="/2020/03/29/JavaThread/" class="archive-article-date">
-  	<time datetime="2020-03-29T02:12:57.235Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-29</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="Java多线程学习总结"><a href="#Java多线程学习总结" class="headerlink" title="Java多线程学习总结"></a>Java多线程学习总结
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/03/29/JavaThread/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Leetcode" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/03/28/Leetcode/">Leetcode</a>
-    </h1>
   
 
-        
-        <a href="/2020/03/28/Leetcode/" class="archive-article-date">
-  	<time datetime="2020-03-28T11:54:42.150Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-28</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="Leetcode刷题"><a href="#Leetcode刷题" class="headerlink" title="Leetcode刷题"></a>Leetcode刷题
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/03/28/Leetcode/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-singleton" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/03/28/singleton/">singleton</a>
-    </h1>
   
 
-        
-        <a href="/2020/03/28/singleton/" class="archive-article-date">
-  	<time datetime="2020-03-28T06:58:56.869Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-28</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="单例模式的Java简单实现以及解释"><a href="#单例模式的Java简单实现以及解释" class="headerlink" title="单例模式的Java简单实现以及解释"></a>单例模式的Java简单实现以及解释
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/03/28/singleton/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-hello-world" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/03/27/hello-world/">hello-world</a>
-    </h1>
-  
-
-        
-        <a href="/2020/03/27/hello-world/" class="archive-article-date">
-  	<time datetime="2020-03-27T05:17:03.895Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-27</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="HelloWorld"><a href="#HelloWorld" class="headerlink" title="HelloWorld"></a>HelloWorld
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/03/27/hello-world/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
 
 
@@ -538,8 +334,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
